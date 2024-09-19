@@ -254,6 +254,7 @@ TEST(HW3Test, TEST18) {
     
     EXPECT_EQ(bst.length(), 10);
     EXPECT_TRUE(bst.delete_node(10)); // only left child
+    std::cout << bst;
     EXPECT_EQ(bst.length(), 9);
     EXPECT_EQ(bst.get_root()->left->value, 5);
     EXPECT_EQ(bst.get_root()->left->left->value, 2);

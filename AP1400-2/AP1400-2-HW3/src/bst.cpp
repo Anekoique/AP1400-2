@@ -94,7 +94,6 @@ void BST::bfs(std::function<void(Node*& node)> func) const
     while (toSerch.size() != 0)
     {
         node = toSerch.front();   
-        std::cout << node->value << std::endl;
         if (std::find(serched.begin(), serched.end(), node) == serched.end())
         {
             serched.push_back(node);
@@ -151,54 +150,74 @@ size_t BST::length() const
     return values.size();
 }
 
+// BST::Node** BST::find_node(int value)
+// {
+//     Node** nodePtr = nullptr;
+//     Node* node = root;
+//     while (node != nullptr)
+//     {
+//         if (value == (*node).value)
+//         {
+//             nodePtr = &node;
+//             std::cout << node << std::endl;
+//             std::cout << node->left->value << std::endl;
+//             std::cout << (*nodePtr)->left->value << std::endl;
+//             std::cout << (*nodePtr)->left <<std::endl;
+//             return nodePtr;
+//         }
+//         else if (value > (*node).value) 
+//         {
+//             node = node->right;
+//         }
+//         else
+//         {
+//             node = node->left;
+//         }
+//     }
+//     std::cout << "current*******";
+//     return nodePtr;
+// }
+//
 BST::Node** BST::find_node(int value)
 {
-    Node** nodePtr = nullptr;
-    Node* node = root;
-    while (node != nullptr)
+    Node** nodePtr = &root;  // 指向根节点的指针
+    while (*nodePtr != nullptr)
     {
-        if (value == (*node).value)
+        if (value == (*nodePtr)->value)  // 找到节点
         {
-            nodePtr = &node;
-            std::cout << node << std::endl;
-            std::cout << node->left->value << std::endl;
-            std::cout << (*nodePtr)->left->value << std::endl;
-            std::cout << (*nodePtr)->left <<std::endl;
             return nodePtr;
         }
-        else if (value > (*node).value) 
+        else if (value > (*nodePtr)->value)
         {
-            node = node->right;
+            nodePtr = &((*nodePtr)->right);
         }
-        else
+        else  
         {
-            node = node->left;
+            nodePtr = &((*nodePtr)->left);
         }
     }
-    return nodePtr;
+    return nullptr;
 }
 
 BST::Node** BST::find_parrent(int value)
 {
-    Node** nodePtr = nullptr;
+    Node** nodePtr = &root;
     Node** parent = nullptr;
-    Node* node = root;
-    while (node != nullptr)
+    while (*nodePtr != nullptr)
     {
-        if (value == (*node).value)
+        if (value == (*nodePtr)->value)
         {
-            nodePtr = parent;
-            return nodePtr;
+            return parent;
         }
-        else if (value > (*node).value)
+        else if (value > (*nodePtr)->value)
         {
-            parent = &node;
-            node = node->right;
+            parent = &(*nodePtr);
+            nodePtr = &((*nodePtr)->right);
         }
         else
         {
-            parent = &node;
-            node = node->left;
+            parent = &(*nodePtr);
+            nodePtr = &((*nodePtr)->left);
         }
     }
     return nullptr;
@@ -206,32 +225,65 @@ BST::Node** BST::find_parrent(int value)
 
 BST::Node** BST::find_successor(int value)
 {
-    Node** nodePtr = nullptr;
-    Node* node = *find_node(value);
-    node = node->left;
-    while (node != nullptr)
-        node = node->right;
-    nodePtr = &node;
-    return nodePtr;
+    Node** nodePtr = find_node(value);
+    if (nodePtr == nullptr) return nullptr;
+    if ((*nodePtr)->left != nullptr)
+    {
+        nodePtr = &((*nodePtr)->left);
+        while ((*nodePtr)->right != nullptr)
+            nodePtr = &((*nodePtr)->right);
+        return nodePtr;
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 bool BST::delete_node(int value)
 {
-    Node* parent = *find_parrent(value);
-    Node* node = *find_node(value);
-    if (node == nullptr) return false;
-    std::vector<int> values;
-    bfs([&values](Node*& node){ values.push_back(node->value); });
-    values.erase(values.begin());
-    if (node->value < parent->value)
+    Node** parent = find_parrent(value);
+    Node** nodePtr = find_node(value);
+    Node** successor = find_successor(value);
+    std::cout << (*successor)->value << std::endl;
+    if (nodePtr == nullptr) return false;
+    if (successor == nullptr)
     {
-        parent->left = nullptr;
+        (*parent)->right = (*nodePtr)->right;
     }
     else
     {
-        parent->right = nullptr;
+        Node** successorP = find_parrent((*successor)->value);
+        if (successorP == nodePtr)
+        {
+            if ((*parent)->value < (*nodePtr)->value)
+            {
+                (*parent)->right = *successor;
+                (*successor)->right = (*nodePtr)->right;
+            }
+            else
+            {
+                (*parent)->left = *successor;
+                (*successor)->right = (*nodePtr)->right;
+            }
+        }
+        else
+        {
+            (*successorP)->right = (*successor)->left;
+            if ((*parent)->value < (*nodePtr)->value)
+            {
+                (*parent)->right = *successor;
+                (*successor)->left = (*nodePtr)->left;
+                (*successor)->right = (*nodePtr)->right;
+            }
+            else
+            {
+                (*parent)->left = *successor;
+                (*successor)->left = (*nodePtr)->left;
+                (*successor)->right = (*nodePtr)->right;
+            }
+        }
     }
-    for (int i = 0; i < values.size(); i++) add_node(values[i]);
     return true;
 }
 
@@ -241,13 +293,14 @@ std::ostream& operator<<(std::ostream& os, const BST& bst)
     std::vector<BST::Node*> serched;
     std::queue<BST::Node*> toSerch;
     toSerch.push(bst.root);
+    std::cout << "current";
     while (toSerch.size() != 0)
     {
         node = toSerch.front();   
-        if (std::find(serched.begin(), serched.end(), node) != serched.end())
+        if (std::find(serched.begin(), serched.end(), node) == serched.end())
         {
             serched.push_back(node);
-            os << node << std::endl;
+            std::cout << *node << std::endl;
             if (node->left != nullptr) toSerch.push(node->left);
             if (node->right != nullptr) toSerch.push(node->right);
         }
