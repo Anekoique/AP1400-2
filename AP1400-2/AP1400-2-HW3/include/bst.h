@@ -34,7 +34,7 @@ public:
 
     BST();
     BST(const BST& bst);
-    BST(const BST&& bst);
+    BST(BST&& bst);
     BST(const std::initializer_list<int>& il);
     ~BST();
     Node*& get_root();
@@ -48,7 +48,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const BST& bst);
     BST operator++();
     BST operator++(int value);
-    BST operator=(const BST& bst);
+    BST& operator=(const BST& bst);
+    BST& operator=(BST&& bst);
 
 private:
     Node* root;

@@ -244,68 +244,90 @@ BST::Node **BST::find_successor(int value)
 
 bool BST::delete_node(int value)
 {
-    Node **parent = find_parrent(value);
-    Node **nodePtr = find_node(value);
-    Node **successor = find_successor(value);
-    if (nodePtr == nullptr)
-        return false;
-    if (successor == nullptr)
+    Node** nodePtr = find_node(value);
+    Node** parent = find_parrent(value);
+    if (nodePtr == nullptr) return false;
+    if ((*nodePtr)->right == nullptr)
     {
-        if ((*nodePtr)->right == nullptr)
+        if ((*nodePtr)->left != nullptr)
         {
             if ((*parent)->value > (*nodePtr)->value)
-                (*parent)->right = nullptr;
+            {
+                (*parent)->left = (*nodePtr)->left;
+            }
             else
-                (*parent)->left = nullptr;
+            {
+                (*parent)->right = (*nodePtr)->left;
+            }
         }
         else
         {
             if ((*parent)->value > (*nodePtr)->value)
-                (*parent)->right = (*nodePtr)->right;
+            {
+                (*parent)->left = nullptr;
+            }
             else
+            {
+                (*parent)->right = nullptr;
+            }
+        }
+    }
+    else if ((*nodePtr)->left == nullptr)
+    {
+        if ((*nodePtr)->right != nullptr)
+        {
+            if ((*parent)->value > (*nodePtr)->value)
+            {
                 (*parent)->left = (*nodePtr)->right;
+            }
+            else
+            {
+                (*parent)->right = (*nodePtr)->right;
+            }
+        }
+        else
+        {
+            if ((*parent)->value > (*nodePtr)->value)
+            {
+                (*parent)->left = nullptr;
+            }
+            else
+            {
+                (*parent)->right = nullptr;
+            }
         }
     }
     else
     {
-        Node **successorP = find_parrent((*successor)->value);
-        if (successorP == nodePtr)
+        if (parent != nullptr)
         {
-            if ((*parent)->value < (*nodePtr)->value)
+            Node** successor = find_successor(value);
+            std::cout << (*successor)->value << std::endl;
+            Node** successorP = find_parrent((*successor)->value);
+            std::cout << (*successorP)->value << std::endl;
+            (*successor)->left = (*nodePtr)->left;
+            (*successor)->right = (*nodePtr)->right;
+            if ((*parent)->value > (*nodePtr)->value)
             {
-                *((*parent)->right) = **successor;
+                (*parent)->left = (*successorP)->right;
             }
             else
             {
-                *((*parent)->left) = **successor;
+                (*parent)->right = (*successorP)->right;
             }
-        }
-        else
-        {
-            if ((*parent)->value < (*nodePtr)->value)
-            {
-                if ((*nodePtr)->right != nullptr)
-                    (*successor)->right = (*nodePtr)->right;
-                else
-                    (*successor)->right = nullptr;
-                *((*parent)->right) = **successor;
-            }
-            else
-            {
-                if ((*nodePtr)->left != nullptr)
-                    (*successor)->left = (*nodePtr)->left;
-                else
-                    (*successor)->left = nullptr;
-                *((*parent)->left) = **successor;
-            }
-        }
-        if ((*successorP)->value < (*successor)->value)
-        {
             (*successorP)->right = nullptr;
         }
         else
         {
-            (*successorP)->left = nullptr;
+            Node** successor = find_successor(value);
+            std::cout << (*successor)->value << std::endl;
+            Node** successorP = find_parrent((*successor)->value);
+            std::cout << (*successorP)->value << std::endl;
+            (*successor)->left = (*nodePtr)->left;
+            (*successor)->right = (*nodePtr)->right;
+            root = (*successorP)->right;
+            (*successorP)->right = nullptr;
+
         }
     }
     return true;
@@ -338,7 +360,7 @@ std::ostream &operator<<(std::ostream &os, const BST &bst)
 
 BST BST::operator++()
 {
-
+    std::cout << "error" << std::endl;
     Node *node;
     std::vector<Node *> serched;
     std::queue<Node *> toSerch;
@@ -346,10 +368,10 @@ BST BST::operator++()
     while (toSerch.size() != 0)
     {
         node = toSerch.front();
-        if (std::find(serched.begin(), serched.end(), node) != serched.end())
+        if (std::find(serched.begin(), serched.end(), node) == serched.end())
         {
             serched.push_back(node);
-            node->value++;
+            node->value += 1;
             if (node->left != nullptr)
                 toSerch.push(node->left);
             if (node->right != nullptr)
@@ -362,7 +384,8 @@ BST BST::operator++()
 
 BST BST::operator++(int value)
 {
-
+    BST temp = *this;
+    std::cout << "current" << std::endl;
     Node *node;
     std::vector<Node *> serched;
     std::queue<Node *> toSerch;
@@ -370,10 +393,12 @@ BST BST::operator++(int value)
     while (toSerch.size() != 0)
     {
         node = toSerch.front();
-        if (std::find(serched.begin(), serched.end(), node) != serched.end())
+        if (std::find(serched.begin(), serched.end(), node) == serched.end())
         {
             serched.push_back(node);
-            node->value++;
+            std::cout << "node:value" << node->value << std::endl;
+            node->value += 1;
+            std::cout << "node:value" << node->value << std::endl;
             if (node->left != nullptr)
                 toSerch.push(node->left);
             if (node->right != nullptr)
@@ -381,7 +406,8 @@ BST BST::operator++(int value)
         }
         toSerch.pop();
     }
-    return *this;
+    std::cout << *this;
+    return temp;
 }
 
 BST::BST()
@@ -391,33 +417,53 @@ BST::BST()
 
 BST::BST(const BST &bst)
 {
+    root = nullptr;
+    std::vector<int> values;
+    bst.bfs([&values](Node *&node) { values.push_back(node->value); });
+    for (int i = 0; i < values.size(); i++)
+    {
+        std::cout << values[i] << std::endl;
+        this->add_node(values[i]);
+    }
+}
+
+BST::BST(BST &&bst)
+{
+    root = bst.root;
+    bst.root = nullptr;
+}
+
+BST& BST::operator=(const BST &bst)
+{
+    std::cout << bst.root;
+    std::cout << this->root;
+    if (bst.root == this->root) {
+        std::cout << "current";
+        return *this;
+    }
+    root = nullptr;
+
     std::vector<int> values;
     bst.bfs([&values](Node *&node) { values.push_back(node->value); });
     for (int i = 0; i < values.size(); i++)
     {
         add_node(values[i]);
     }
+
+    return *this;
 }
 
-BST::BST(const BST &&bst)
+BST& BST::operator=(BST&& bst)
 {
     root = bst.root;
-}
+    bst.root = nullptr;
+    return *this;
 
-BST BST::operator=(const BST &bst)
-{
-    BST newBST;
-    std::vector<int> values;
-    bst.bfs([&values](Node *&node) { values.push_back(node->value); });
-    for (int i = 0; i < values.size(); i++)
-    {
-        newBST.add_node(values[i]);
-    }
-    return newBST;
 }
 
 BST::BST(const std::initializer_list<int> &il)
 {
+    root = nullptr;
     for (auto &value : il)
     {
         add_node(value);
