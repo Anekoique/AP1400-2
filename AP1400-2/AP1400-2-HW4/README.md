@@ -31,13 +31,13 @@ The prefered way to construct a  std::unique_ptr is to use a function called `st
 	```
 
 - **Default Constructor**
-Implement a default constructor for your class so the below code works and assign `nullptr` to `_p`.
+	Implement a default constructor for your class so the below code works and assign `nullptr` to `_p`.
 
 	```cpp
 	UniquePtr<int> ptr;
 	```
 - **Destructor**
-As you know when dealing a with dynamic pointer in a class, implementing destructor is a neccessaty so implement a proper destructor and delete your dynamic pointer (*hint:* assign `nullptr` after deletion).
+	As you know when dealing a with dynamic pointer in a class, implementing destructor is a neccessaty so implement a proper destructor and delete your dynamic pointer (*hint:* assign `nullptr` after deletion).
 
 	```cpp
 	~UniquePtr()
@@ -51,7 +51,7 @@ As you already know you cannot copy a UniquePtr, make arrangements so the follow
 	```
 
 - **Operator=**
-Exactly like the previous section we should not be able to write the following code as well. Make the copiler to produce an error for this code.
+	Exactly like the previous section we should not be able to write the following code as well. Make the copiler to produce an error for this code.
 
 	```cpp
 	UniquePtr<int> ptr1{new int{10}};
@@ -59,14 +59,14 @@ Exactly like the previous section we should not be able to write the following c
 	ptr2 = ptr1;
 	```
 - **get**
-The get() function should return the raw pointer stored in the class.
+	The get() function should return the raw pointer stored in the class.
 
 	```cpp
 	UniquePtr<int> ptr{new int{10}};
 	std::cout << ptr.get() << std::endl; // output: raw pointer stored in the class
 	```
 - **Operator***
-Smart pointers should be able to be dereferenced exactly like raw pointers. make this code work:
+	Smart pointers should be able to be dereferenced exactly like raw pointers. make this code work:
 
 	```cpp
 	UniquePtr<int> ptr{new int{10}};
@@ -88,7 +88,7 @@ The reset() function will delete the ponter and assign `nullptr` to it:
 	```
 
 - **reset**
-The reset() function can have a input and make a new pointer with it after deleting the old pointer:
+	The reset() function can have a input and make a new pointer with it after deleting the old pointer:
 
 	```cpp
 	UniquePtr<std::string> ptr{new std::string{"hello"}};
@@ -96,7 +96,7 @@ The reset() function can have a input and make a new pointer with it after delet
 	std::cout << *ptr << std::endl; // output: nice
 	```
 - **release**
-The release() function returns the stored pointer in the class (like get) with two differences: The UniquePtr class won't store  the pointer anymore and also deleting the pointer should **not** be done by UniquePtr class after calling release().
+	The release() function returns the stored pointer in the class (like get) with two differences: The UniquePtr class won't store  the pointer anymore and also deleting the pointer should **not** be done by UniquePtr class after calling release().
 
 	```cpp
 	UniquePtr<double> ptr{new double{1.567}};
@@ -129,7 +129,7 @@ The prefered way to construct a  std::shared_ptr is to use a function called `st
 	```
 
 - **Default Constructor**
-Implement a default constructor for your class so the below code works and assign nullptr to `_p`.
+	Implement a default constructor for your class so the below code works and assign nullptr to `_p`.
 
 	```cpp
 	SharedPtr<int> ptr;
@@ -172,14 +172,14 @@ In `SharedPtr`s we should have the ability to count the number of instances poin
 	```
 
 - **get**
-The get() function should return the raw pointer stored in the class.
+	The get() function should return the raw pointer stored in the class.
 
 	```cpp
 	SharedPtr<int> ptr{new int{10}};
 	std::cout << ptr.get() << std::endl; // output: raw pointer of the class
 	```
 - **Operator***
-Smart pointers should be able to be dereferenced exactly like raw pointers. make this code work:
+	Smart pointers should be able to be dereferenced exactly like raw pointers. make this code work:
 
 	```cpp
 	SharedPtr<int> ptr{new int{10}};
@@ -201,7 +201,7 @@ The reset() function will delete the pointer and assigns `nullptr` to it:
 	```
 
 - **reset**
-The reset() function can have a input and make a new pointer with it after deleting the old pointer:
+	The reset() function can have a input and make a new pointer with it after deleting the old pointer:
 
 	```cpp
 	SharedPtr<std::string> ptr{new std::string{"hello"}};
@@ -210,20 +210,22 @@ The reset() function can have a input and make a new pointer with it after delet
 	```
 
 </br> 
- 
+
 # Challenge
 - If you reached this section congratulations, there is only one part left. Make arrangements so you can use your custom smart pointers in an *if condition*, the condition should return *false* if your smart pointer contains a `nullptr` and otherwise it should return *true*.
 
 
-	```cpp
-	UniquePtr<double> ptr{new double{1.567}};
-    if(ptr) // => true
-        // something
-	ptr.reset();
-	if(ptr) // => false
-        // some other thing
-	```
-	Make this arrangement for both `UniquePtr` and `SharedPtr` classes.
+````
+```cpp
+UniquePtr<double> ptr{new double{1.567}};
+if(ptr) // => true
+    // something
+ptr.reset();
+if(ptr) // => false
+    // some other thing
+```
+Make this arrangement for both `UniquePtr` and `SharedPtr` classes.
+````
 </br>
 
 # Finally
