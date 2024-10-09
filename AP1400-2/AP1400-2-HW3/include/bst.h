@@ -40,13 +40,15 @@ public:
     Node*& get_root();
     void bfs(std::function<void(Node*& node)> func) const;
     size_t length() const;
+    size_t length(Node* current);
     bool add_node(int value);
+    bool add_node(int value, Node* current);
     Node** find_node(int value);
     Node** find_parrent(int value);
     Node** find_successor(int value);
     bool delete_node(int value);
     friend std::ostream& operator<<(std::ostream& os, const BST& bst);
-    BST operator++();
+    BST& operator++();
     BST operator++(int value);
     BST& operator=(const BST& bst);
     BST& operator=(BST&& bst);

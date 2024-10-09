@@ -82,66 +82,123 @@ BST::Node *&BST::get_root()
     return root;
 }
 
+// void BST::bfs(std::function<void(Node *&node)> func) const
+// {
+//     Node *node;
+//     std::vector<Node *> serched;
+//     std::queue<Node *> toSerch;
+//     if (root == nullptr)
+//         return;
+//     toSerch.push(root);
+//     while (toSerch.size() != 0)
+//     {
+//         node = toSerch.front();
+//         if (std::find(serched.begin(), serched.end(), node) == serched.end())
+//         {
+//             serched.push_back(node);
+//             func(node);
+//             if (node->left != nullptr)
+//                 toSerch.push(node->left);
+//             if (node->right != nullptr)
+//                 toSerch.push(node->right);
+//         }
+//         toSerch.pop();
+//     }
+// }
+
 void BST::bfs(std::function<void(Node *&node)> func) const
 {
-    Node *node;
-    std::vector<Node *> serched;
     std::queue<Node *> toSerch;
-    if (root == nullptr)
-        return;
-    toSerch.push(root);
-    while (toSerch.size() != 0)
+    Node* current = root;
+    if (current == nullptr) return;
+    toSerch.push(current);
+    while (!toSerch.empty())
     {
-        node = toSerch.front();
-        if (std::find(serched.begin(), serched.end(), node) == serched.end())
-        {
-            serched.push_back(node);
-            func(node);
-            if (node->left != nullptr)
-                toSerch.push(node->left);
-            if (node->right != nullptr)
-                toSerch.push(node->right);
-        }
+        current = toSerch.front();
+        func(current);
         toSerch.pop();
+        if (current->left) toSerch.push(current->left);
+        if (current->right) toSerch.push(current->right);
     }
 }
 
 bool BST::add_node(int value)
 {
-    if (root == nullptr)
-    {
-        root = new Node(value, nullptr, nullptr);
+    //if (root == nullptr)
+    //{
+    //    root = new Node(value, nullptr, nullptr);
+    //    return true;
+    //}
+    //Node *node = root;
+    //int flag = 0;
+    //while (!flag)
+    //{
+    //    if (value == (*node).value)
+    //    {
+    //        return false;
+    //    }
+    //    else if (value > (*node).value)
+    //    {
+    //        if (node->right == nullptr)
+    //        {
+    //            flag = 1;
+    //            node->right = new Node(value, nullptr, nullptr);
+    //        }
+    //        node = node->right;
+    //    }
+    //    else
+    //    {
+    //        if (node->left == nullptr)
+    //        {
+    //            node->left = new Node(value, nullptr, nullptr);
+    //            flag = 1;
+    //        }
+    //        node = node->left;
+    //    }
+    //}
+
+    //return true;
+    Node *node = new Node(value, nullptr, nullptr);
+    if (get_root() == nullptr) {
+        root = node;
         return true;
     }
-    Node *node = root;
-    int flag = 0;
-    while (!flag)
-    {
-        if (value == (*node).value)
-        {
+    Node *curr = get_root();
+    Node *prev;
+    while (curr != nullptr) {
+        if (*curr == value) { // 运算符重载
             return false;
-        }
-        else if (value > (*node).value)
-        {
-            if (node->right == nullptr)
-            {
-                flag = 1;
-                node->right = new Node(value, nullptr, nullptr);
-            }
-            node = node->right;
-        }
-        else
-        {
-            if (node->left == nullptr)
-            {
-                node->left = new Node(value, nullptr, nullptr);
-                flag = 1;
-            }
-            node = node->left;
+        } else if (value > *curr) {
+            prev = curr;
+            curr = curr->right;
+        } else if (value < *curr) {
+            prev = curr;
+            curr = curr->left;
         }
     }
-
+    if (value > *prev) {
+        prev->right = node;
+    } else if (value < *prev) {
+        prev->left = node;
+    }
     return true;
+}
+
+// 递归实现添加节点
+bool BST::add_node(int value, Node* current)
+{
+    if (current == nullptr)
+    {
+        current = new Node(value, nullptr, nullptr);
+        return true;
+    }
+
+    if (value < current->value)
+        return add_node(value, current->left);
+    else if (value == current->value)
+        return false;
+    else 
+        return add_node(value, current->right);
 }
 
 size_t BST::length() const
@@ -151,6 +208,14 @@ size_t BST::length() const
     return values.size();
 }
 
+// 递归求树的长度
+size_t BST::length(Node* current)
+{
+    size_t len;
+    if(current == nullptr) return 0;
+    len = 1 + length(current->left) + length(current->right);
+    return len;
+}
 // BST::Node** BST::find_node(int value)
 // {
 //     Node** nodePtr = nullptr;
@@ -184,11 +249,11 @@ BST::Node **BST::find_node(int value)
     Node **nodePtr = &root; // 指向根节点的指针
     while (*nodePtr != nullptr)
     {
-        if (value == (*nodePtr)->value) // 找到节点
+        if (value == **nodePtr) // 找到节点
         {
             return nodePtr;
         }
-        else if (value > (*nodePtr)->value)
+        else if (value > **nodePtr)
         {
             nodePtr = &((*nodePtr)->right);
         }
@@ -358,56 +423,73 @@ std::ostream &operator<<(std::ostream &os, const BST &bst)
     return os;
 }
 
-BST BST::operator++()
+// BST BST::operator++()
+// {
+//     Node *node;
+//     std::vector<Node *> serched;
+//     std::queue<Node *> toSerch;
+//     toSerch.push(root);
+//     while (toSerch.size() != 0)
+//     {
+//         node = toSerch.front();
+//         if (std::find(serched.begin(), serched.end(), node) == serched.end())
+//         {
+//             serched.push_back(node);
+//             node->value += 1;
+//             if (node->left != nullptr)
+//                 toSerch.push(node->left);
+//             if (node->right != nullptr)
+//                 toSerch.push(node->right);
+//         }
+//         toSerch.pop();
+//     }
+//     return *this;
+// }
+
+// BST BST::operator++(int value)
+// {
+//     BST temp = *this;
+//     std::cout << "current" << std::endl;
+//     Node *node;
+//     std::vector<Node *> serched;
+//     std::queue<Node *> toSerch;
+//     toSerch.push(root);
+//     while (toSerch.size() != 0)
+//     {
+//         node = toSerch.front();
+//         if (std::find(serched.begin(), serched.end(), node) == serched.end())
+//         {
+//             serched.push_back(node);
+//             std::cout << "node:value" << node->value << std::endl;
+//             node->value += 1;
+//             std::cout << "node:value" << node->value << std::endl;
+//             if (node->left != nullptr)
+//                 toSerch.push(node->left);
+//             if (node->right != nullptr)
+//                 toSerch.push(node->right);
+//         }
+//         toSerch.pop();
+//     }
+//     std::cout << *this;
+//     return temp;
+// }
+
+BST& BST::operator++()
 {
-    std::cout << "error" << std::endl;
-    Node *node;
-    std::vector<Node *> serched;
-    std::queue<Node *> toSerch;
-    toSerch.push(root);
-    while (toSerch.size() != 0)
+    std::vector<Node *> nodes;
+    bfs([&nodes](BST::Node*& node) { nodes.push_back(node); });
+    for (Node* node : nodes)
     {
-        node = toSerch.front();
-        if (std::find(serched.begin(), serched.end(), node) == serched.end())
-        {
-            serched.push_back(node);
-            node->value += 1;
-            if (node->left != nullptr)
-                toSerch.push(node->left);
-            if (node->right != nullptr)
-                toSerch.push(node->right);
-        }
-        toSerch.pop();
+        node->value ++;
     }
     return *this;
 }
 
-BST BST::operator++(int value)
+BST BST::operator++(int)
 {
-    BST temp = *this;
-    std::cout << "current" << std::endl;
-    Node *node;
-    std::vector<Node *> serched;
-    std::queue<Node *> toSerch;
-    toSerch.push(root);
-    while (toSerch.size() != 0)
-    {
-        node = toSerch.front();
-        if (std::find(serched.begin(), serched.end(), node) == serched.end())
-        {
-            serched.push_back(node);
-            std::cout << "node:value" << node->value << std::endl;
-            node->value += 1;
-            std::cout << "node:value" << node->value << std::endl;
-            if (node->left != nullptr)
-                toSerch.push(node->left);
-            if (node->right != nullptr)
-                toSerch.push(node->right);
-        }
-        toSerch.pop();
-    }
-    std::cout << *this;
-    return temp;
+    auto copy = (*this);
+    ++(*this);
+    return copy;
 }
 
 BST::BST()
@@ -415,14 +497,12 @@ BST::BST()
     root = nullptr;
 }
 
-BST::BST(const BST &bst)
+BST::BST(const BST &bst) : BST()
 {
-    root = nullptr;
     std::vector<int> values;
     bst.bfs([&values](Node *&node) { values.push_back(node->value); });
     for (int i = 0; i < values.size(); i++)
     {
-        std::cout << values[i] << std::endl;
         this->add_node(values[i]);
     }
 }
@@ -435,13 +515,10 @@ BST::BST(BST &&bst)
 
 BST& BST::operator=(const BST &bst)
 {
-    std::cout << bst.root;
-    std::cout << this->root;
     if (bst.root == this->root) {
-        std::cout << "current";
         return *this;
     }
-    root = nullptr;
+    this->~BST(); // 先释放原本的树的内存
 
     std::vector<int> values;
     bst.bfs([&values](Node *&node) { values.push_back(node->value); });
@@ -455,6 +532,7 @@ BST& BST::operator=(const BST &bst)
 
 BST& BST::operator=(BST&& bst)
 {
+    this->~BST(); // 先释放原本的树的内存
     root = bst.root;
     bst.root = nullptr;
     return *this;
@@ -477,7 +555,6 @@ BST::~BST()
     std::cout << nodes.size();
     for (auto &node : nodes)
     {
-        if (node != nullptr)
-            delete node;
+        delete node;
     }
 }

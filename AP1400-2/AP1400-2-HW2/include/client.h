@@ -16,7 +16,7 @@ public:
 	bool transfer_money(std::string receiver, double value);
 	size_t generate_nonce();
 private:
-	Server const* const server;
+	Server const* server;
 	const std::string id;
 	std::string public_key;
 	std::string private_key;
