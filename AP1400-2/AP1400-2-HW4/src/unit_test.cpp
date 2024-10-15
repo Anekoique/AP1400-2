@@ -149,6 +149,7 @@ TEST(HW4Test, TEST15) {
     ptr1.~SharedPtr();
     EXPECT_EQ(ptr1.use_count(), 0);
     EXPECT_EQ(ptr1.get(), nullptr);
+    std::cout << "here\n";
 }
 
 TEST(HW4Test, TEST16) {
