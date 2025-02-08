@@ -1,0 +1,3 @@
+/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/build/CMakeFiles/main.dir
+/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/build/CMakeFiles/edit_cache.dir
+/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/build/CMakeFiles/rebuild_cache.dir

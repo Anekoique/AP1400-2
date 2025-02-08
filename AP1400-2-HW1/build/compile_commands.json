@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/build",
+  "command": "/usr/bin/c++ -DGTEST_LINKED_AS_SHARED_LIBRARY=1 -I/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/include -isystem /home/stoair/anaconda3/include -std=gnu++14 -o CMakeFiles/main.dir/src/main.cpp.o -c /home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/src/main.cpp",
+  "file": "/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/src/main.cpp"
+},
+{
+  "directory": "/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/build",
+  "command": "/usr/bin/c++ -DGTEST_LINKED_AS_SHARED_LIBRARY=1 -I/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/include -isystem /home/stoair/anaconda3/include -std=gnu++14 -o CMakeFiles/main.dir/src/hw1.cpp.o -c /home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/src/hw1.cpp",
+  "file": "/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/src/hw1.cpp"
+},
+{
+  "directory": "/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/build",
+  "command": "/usr/bin/c++ -DGTEST_LINKED_AS_SHARED_LIBRARY=1 -I/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/include -isystem /home/stoair/anaconda3/include -std=gnu++14 -o CMakeFiles/main.dir/src/unit_test.cpp.o -c /home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/src/unit_test.cpp",
+  "file": "/home/stoair/CS106L/AP1400-2/HW1/AP1400-2-HW1/src/unit_test.cpp"
+}
+]
